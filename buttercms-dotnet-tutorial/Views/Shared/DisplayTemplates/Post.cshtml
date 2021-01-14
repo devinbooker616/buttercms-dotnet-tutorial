@@ -1,0 +1,40 @@
+﻿@model ButterCMS.Models.Post
+<!-- Blog Post Start -->
+<div class="col-md-12 blog-post">
+    @*@if (!string.IsNullOrWhiteSpace(Model.FeaturedImage))
+    {
+        <div>
+            <img src="@Html.GetResizedImageUrl(Model.FeaturedImage, 922, 150, FitType.Crop)" alt=""
+                 srcset="@Html.GetResizedImageUrl(Model.FeaturedImage, 320, FitType.Max) 320w,
+                    @Html.GetResizedImageUrl(Model.FeaturedImage, 480, FitType.Max) 480w,
+                    @Html.GetResizedImageUrl(Model.FeaturedImage, 768, 250, FitType.Crop) 768w,
+                    @Html.GetResizedImageUrl(Model.FeaturedImage, 922, 250, FitType.Crop) 992w,
+                    @Html.GetResizedImageUrl(Model.FeaturedImage, 1200, 250, FitType.Crop) 1200w"
+                 sizes="(max-width: 320px) 100vw,
+                    (max-width: 480px) 100vw,
+                    (max-width: 768px) 75vw,
+                    (max-width: 992px) 66vw,
+                    (max-width: 1200px) 66vw" />*@
+        </div>
+    @*}*@
+    @*<div class="post-title">
+        <a href="/blog/@Uri.EscapeDataString(Model.Slug)">
+            <h1>@Model.Title</h1>
+        </a>
+    </div>
+    <div class="post-info">
+        <span>@(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a></span>
+    </div>
+    <p>@Model.Summary</p>
+    <a href="/blog/@Uri.EscapeDataString(Model.Slug)" class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+</div>*@
+    <div class="card">
+        <div class="card-body">
+            <h1>@Model.Title</h1>
+            <span>@(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a></span>
+            <p>@Model.Summary</p>
+            <a href="/blog/@Uri.EscapeDataString(Model.Slug)" class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+            
+        </div>
+    </div>
+<!-- Blog Post End -->

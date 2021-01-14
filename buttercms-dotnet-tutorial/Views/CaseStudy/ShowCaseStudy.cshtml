@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "ShowCaseStudy";
+}
+
+@model CaseStudyViewModel
+<html>
+<head>
+    <title>@Model.SeoTitle</title>
+    <meta property="og:title" content="@Model.FacebookOGTitle" />
+</head>
+<body>
+    <h1>@Model.Headline</h1>
+    <img width="100%" src="@Model.CustomerLogo">
+    <p>@Model.Testimonial</p>
+</body>
+</html>
+

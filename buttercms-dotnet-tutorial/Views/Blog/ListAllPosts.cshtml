@@ -1,0 +1,51 @@
+﻿@model buttercms_dotnet_tutorial.Models.BlogListViewModel
+@{
+    ViewBag.Title = "Blog";
+}
+
+<h2>Posts</h2>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Card title</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+        <p class="card-text">
+            Some quick example text to build on the card title
+            and make up the bulk of the card's content.
+        </p>
+        <a href="#!" class="card-link">Card link</a>
+        <a href="#!" class="card-link">Another link</a>
+    </div>
+</div>
+@Html.DisplayFor(m => m.Posts)
+
+
+
+
+@if (Model.TotalPages > 1)
+{
+    if (Model.PreviousPage != null)
+    {
+        <a href="/p/@Model.PreviousPage">Prev</a>
+    }
+
+    for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        if (i == Model.CurrentPage)
+        {
+
+            <span class="page-number active">@i</span>
+        }
+        else
+        {
+            <span class="page-number"><a href="/p/@i">@i</a></span>
+        }
+
+    }
+
+    if (ViewBag.NextPage != null)
+    {
+        <a href="/p/@Model.NextPage">Next</a>
+    }
+}
+
+

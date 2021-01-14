@@ -1,0 +1,19 @@
+﻿@model CaseStudiesViewModel
+
+<div>
+    <a href="/customers/?page=@Model.PreviousPageNumber&pageSize=10">Previous page</a>
+    <a href="/customers/?page=@Model.NextPageNumber&pageSize=10">Next page</a>
+</div>
+<div>
+    <p>@Model.PagesCount customers total</p>
+</div>
+<div>
+    <ul>
+        @foreach (var pages in Model.CaseStudies)
+        {
+            <li>
+                <a href="/customers/@pages.Slug ">@pages.Headline
+            </li>
+        }
+    </ul>
+</div>

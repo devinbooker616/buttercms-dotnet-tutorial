@@ -12,8 +12,10 @@
 In Visual Studio, open the Package Manager Console and run:
 ```Install-Package ButterCMS```
 
-# Configuration 
+# Configuration
 With the nuget package installed we can start doing some basic setup for the whole project. First we’re gonna add a new folder to the project called ```Configuration``` and it will contain three files. 
+
+Important note: Everywhere it says "YOUR KEY" is where you will want to put the API key ButterCMS gives you.
 
 First make a folder named ```Configuration```. The first file we’ll make will be called ```ButterCmsOptions.cs``` and it will be a model:
 

@@ -1,6 +1,6 @@
 ﻿@model ButterCMS.Models.Post
 <!-- Blog Post Start -->
-<div class="col-md-12 blog-post">
+@*<div class="col-md-12 blog-post">*@
     @*@if (!string.IsNullOrWhiteSpace(Model.FeaturedImage))
     {
         <div>
@@ -15,7 +15,7 @@
                     (max-width: 768px) 75vw,
                     (max-width: 992px) 66vw,
                     (max-width: 1200px) 66vw" />*@
-        </div>
+        @*</div>*@
     @*}*@
     @*<div class="post-title">
         <a href="/blog/@Uri.EscapeDataString(Model.Slug)">
@@ -28,13 +28,29 @@
     <p>@Model.Summary</p>
     <a href="/blog/@Uri.EscapeDataString(Model.Slug)" class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
 </div>*@
-    <div class="card">
-        <div class="card-body">
+    @*<div class="card">
+        <div class="card-body" style="max-width:100%;
+  max-height:100%;">
             <h1>@Model.Title</h1>
             <span>@(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a></span>
-            <p>@Model.Summary</p>
+            <p style="max-width:100%;
+  max-height:100%;">@Model.Summary</p>
             <a href="/blog/@Uri.EscapeDataString(Model.Slug)" class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
             
         </div>
+    </div>*@
+     
+        
+    <div class="col-5 md:col-2 md:gap-x-8 lg:gap-x-16 gap-y-10 md:gap-y-16">
+        <img style="max-height: 100%; max-width: 100%" src="@Model.FeaturedImage" />
+        <h3 class="text-3xl mb-3 leadiRng-snug">
+            <a class="hover:underline" href="/blog/@Uri.EscapeDataString(Model.Slug)">@Model.Title</a>
+        </h3>
+        <p>@(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a></p>
+        <div class="text-lg mb-4">
+            <p class="text-lg leading-relaxed mb-4">@Model.Summary</p>
+        </div>
     </div>
+        
+   
 <!-- Blog Post End -->

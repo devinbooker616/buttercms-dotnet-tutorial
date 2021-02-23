@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewData["Title"] = "ShowCaseStudy";
+    
 }
 
 @model CaseStudyViewModel
@@ -9,10 +10,15 @@
     <title>@Model.SeoTitle</title>
     <meta property="og:title" content="@Model.FacebookOGTitle" />
 </head>
-<body>
+<body class="container">
     <h1>@Model.Headline</h1>
-    <img width="100%" src="@Model.CustomerLogo">
-    <p>@Model.Testimonial</p>
+    <p>@Model.FacebookOGTitle</p>
+    <div class="row">
+        <img class="mr-auto w-50 h-100 col-5" src="@Model.CustomerLogo">
+        <p class="col-5">Study date: <time datetime="2020-08-30T00:00:00">August 30, 2020</time></p>
+    </div>
+    <p class="mt-5">@Model.Testimonial</p>
+    
 </body>
 </html>
 

@@ -69,3 +69,15 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.index-cards {
+    border: none !important;
+    background-color: rgb(249, 250, 251) !important;
+}
+
+@media (min-width: 768px){
+    .mobile-pages {
+        padding-left: 50% !important;
+    }
+}
+

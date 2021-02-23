@@ -1,21 +1,77 @@
 ﻿@model HomeViewModel
-@*@{
-        Layout = "~/Views/Shared/Layouts/_Layout.cshtml";
-    }*@
 
-<html>
-<head>
-    <title>@Model.SeoTitle</title>
-</head>
+
+@*<html>
+
 <body>
-    <h1>@Model.Headline</h1>
-    <img width="100%" src="@Model.HeroImage">
-    <button>@Model.CallToAction</button>
-    <h3>Our Customers Love Us!</h3>
-    <!-- Loop over customer logos -->
-    @foreach (var item in Model.CustomerLogos)
-    {
-        @item.logo_image
-    }
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Blogs</h4>
+                    <p class="card-text">
+                        This is all of the blog written so far
+                    </p>
+                    <a class="btn btn-primary" asp-area="" asp-controller="Blog" asp-action="ListAllPosts">Go to blogs</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Cusomter Pages</h4>
+                    <p class="card-text">
+                        this is all of the case study pages posted so far
+                    </p>
+                    <a class="btn btn-primary" asp-controller="CaseStudy" asp-action="Index">Go to customer pages</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <img class="card-img-top" style="max-height: 300px; max-width: 300px;" src="~/css/Bitmap-MEDIUM_ASP.NET-Core-Logo_2colors_Square_RGB.png" alt="Card image cap">
+                <div class="card-body">
+                    <h4 class="card-title">Built with ASP.Net Core</h4>
+                    <p class="card-text">
+                        This small tutorial was built with ASP.Net Core MVC 
+                    </p>
+                    <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-5.0" class="btn btn-primary">Read the docs</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <img class="card-img-top" style="max-height: 300px; max-width: 300px;" src="~/css/vEbzRom2_400x400.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h4 class="card-title">ButterCMS</h4>
+                    <p class="card-text">
+                        A Wonderful tool for blogs and business pages
+                    </p>
+                    <a href="https://buttercms.com/docs/api-client/dotnet#Setup" class="btn btn-primary">Read the docs</a>
+                </div>
+            </div>
+        </div>
+        </div>
+
 </body>
-</html>
+</html>*@
+    <h3>ButterCMS. Headless CMS you'll melt over</h3>
+    <div class="card bg-gray-50 mb-5 rounded-lg index-cards">
+        <div class="card-body bg-gray-50 mb-5 rounded-lg">
+            <h1 class="card-title"><strong>Blog Engine</strong></h1>
+            <h1 class="card-title text-primary" style="color: "><strong>You've got better things to do than building another blog.</strong></h1>
+            <a class="btn btn-primary" asp-area="" asp-controller="Blog" asp-action="ListAllPosts">Preview integration</a>
+            <a class="btn btn-outline-dark" href="https://buttercms.com/features/#flexiblecontentmodeling-blog-engine">Learn More</a>
+        </div>
+    </div>
+    <div class="card bg-gray-50 mb-5 rounded-lg index-cards">
+        <div class="card-body bg-gray-50 mb-5 rounded-lg index-cards">
+            <h1 class="card-title"><strong>Pages</strong></h1>
+            <h1 class="card-title text-primary"><strong>Build SEO landing pages, knowledge base, news articles, and more by using Page Types.</strong></h1>
+            <a class="btn btn-primary" asp-controller="CaseStudy" asp-action="Index">Preview integration</a>
+            <a class="btn btn-outline-dark" href="https://buttercms.com/features/#flexiblecontentmodeling-page-types">Learn More</a>
+        </div>
+    </div>

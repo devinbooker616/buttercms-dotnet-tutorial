@@ -14,6 +14,10 @@ namespace buttercms_dotnet_tutorial.Controllers
 {
     public class BaseController : Controller
     {
+        private IHostingEnvironment hostingEnvironment;
+        private IOptions<UrlOptions> urlOptions;
+        private IOptions<ButterCmsOptions> siteOptions;
+
         public IWebHostEnvironment HostingEnvironment { get; }
         public ButterCmsOptions SiteOptions { get; }
         public ButterCMSClient Client { get; }
@@ -27,6 +31,15 @@ namespace buttercms_dotnet_tutorial.Controllers
             Client = client;
             Cache = cache;
             UrlOptions = urlOptions.Value;
+        }
+
+        public BaseController(IHostingEnvironment hostingEnvironment, IOptions<UrlOptions> urlOptions, IOptions<ButterCmsOptions> siteOptions, ButterCMSClient client, IMemoryCache cache)
+        {
+            this.hostingEnvironment = hostingEnvironment;
+            this.urlOptions = urlOptions;
+            this.siteOptions = siteOptions;
+            Client = client;
+            Cache = cache;
         }
 
         /// <inheritdoc />

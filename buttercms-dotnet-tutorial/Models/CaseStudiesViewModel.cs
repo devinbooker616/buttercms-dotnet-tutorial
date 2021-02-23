@@ -11,6 +11,5 @@ namespace buttercms_dotnet_tutorial.Models
         public int? PreviousPageNumber { get; set; }
         public int? NextPageNumber { get; set; }
         public int PagesCount { get; set; }
-
     }
 }

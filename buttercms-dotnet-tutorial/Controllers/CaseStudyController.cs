@@ -15,29 +15,40 @@ namespace buttercms_dotnet_tutorial.Controllers
     {
         public class CaseStudyPage
         {
+            public string slug { get; set; }
             public string facebook_open_graph_title { get; set; }
             public string seo_title { get; set; }
             public string headline { get; set; }
             public string testimonial { get; set; }
             public string customer_logo { get; set; }
+
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [Route("customers/")]
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
+
             var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
 
             var parameterDict = new Dictionary<string, string>()
             {
                 {"page", page.ToString()},
-                {"page_size", pageSize.ToString()}
+                {"page_size", pageSize.ToString()},
+
             };
 
-            PagesResponse<CaseStudyPage> caseStudyPages = butterClient.ListPages<CaseStudyPage>("*", parameterDict);
+            PagesResponse<CaseStudyPage> caseStudyPages = butterClient.ListPages<CaseStudyPage>("customer_case_study", parameterDict);
 
             var viewModel = new CaseStudiesViewModel();
             viewModel.PreviousPageNumber = caseStudyPages.Meta.PreviousPage;
             viewModel.NextPageNumber = caseStudyPages.Meta.NextPage;
             viewModel.PagesCount = caseStudyPages.Meta.Count;
+
 
             viewModel.CaseStudies = new List<CaseStudyViewModel>();
             foreach (Page<CaseStudyPage> caseStudy in caseStudyPages.Data)
@@ -49,6 +60,7 @@ namespace buttercms_dotnet_tutorial.Controllers
                 caseStudyViewModel.Headline = caseStudy.Fields.headline;
                 caseStudyViewModel.Testimonial = caseStudy.Fields.testimonial;
                 caseStudyViewModel.CustomerLogo = caseStudy.Fields.customer_logo;
+                caseStudyViewModel.Slug = caseStudy.Slug;
 
                 viewModel.CaseStudies.Add(caseStudyViewModel);
             }
@@ -59,7 +71,7 @@ namespace buttercms_dotnet_tutorial.Controllers
 
         [Route("customers/{slug}")]
         public async Task<ActionResult> ShowCaseStudy(string slug)
-       
+
         {
             var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
 
@@ -74,6 +86,6 @@ namespace buttercms_dotnet_tutorial.Controllers
 
             return View(viewModel);
         }
-        
+
     }
 }

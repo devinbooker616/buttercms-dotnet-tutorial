@@ -21,7 +21,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         {
         }
 
-        [Route("")]
+
         [Route("p/{page}")]
         [Route("blog")]
         [Route("blog/p/{page}")]

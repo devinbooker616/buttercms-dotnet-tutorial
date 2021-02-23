@@ -4,91 +4,35 @@
     ViewBag.Author = Model.Author;
 }
 
+<style>
+    .img {
+        max-height: 100%;
+        max-width: 100%;
+    }
+</style>
+
 <div class="col-xs-6">
     <a href="/" title="Go to Home Page"><i class="fas fa-arrow-left"></i> Back Home</a>
 </div>
-<div class="col-xs-6 right">
-    <a href="#comment" class="smoth-scroll"><i class="icon-bubbles"></i> Go to comments</a>
+
+
+
+<!-- Post Headline Start -->
+<div class="post-title">
+    <h1>@Model.Title</h1>
 </div>
 
-@*<div class="col-md-12 blog-post">
-    @if (!string.IsNullOrWhiteSpace(Model.FeaturedImage))
-    {
-        <div class="">
-            <img class="img-rounded post-image margin-top-30" src="@Html.GetResizedImageUrl(Model.FeaturedImage, 922, 150, FitType.Crop)" alt=""
-                 srcset="@Html.GetResizedImageUrl(Model.FeaturedImage, 320, FitType.Max) 320w,
-                    @Html.GetResizedImageUrl(Model.FeaturedImage, 480, FitType.Max) 480w,
-                    @Html.GetResizedImageUrl(Model.FeaturedImage, 768, 250, FitType.Crop) 768w,
-                    @Html.GetResizedImageUrl(Model.FeaturedImage, 922, 350, FitType.Crop) 992w,
-                    @Html.GetResizedImageUrl(Model.FeaturedImage, 1200, 450, FitType.Crop) 1200w"
-                 sizes="(max-width: 320px) 100vw,
-                    (max-width: 480px) 100vw,
-                    (max-width: 768px) 75vw,
-                    (max-width: 992px) 66vw,
-                    (max-width: 1200px) 66vw" />
-        </div>
-    }*@
+<h2>@Model.Author.FirstName @Model.Author.LastName</h2>
+<!-- Post Headline End -->
+<!-- Post Detail Start -->
 
-    <!-- Post Headline Start -->
-    <div class="post-title">
-        <h1>@Model.Title</h1>
-    </div>
-    <!-- Post Headline End -->
-    <!-- Post Detail Start -->
-    <div class="post-info">
-        <span>
-            @(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a>
-            @if (Model.Categories.Any())
-            {
-                @:in
-            }
-            @foreach (var category in Model.Categories)
-            {
-                <a href="/category/@Uri.EscapeDataString(category.Slug)">@category.Name</a>
-            }
-        </span>
-    </div>
-    <!-- Post Detail End -->
-    <div class="card">
-        <div class="card-body">
-            @Html.Raw(Model.Body)
-        </div>
+<!-- Post Detail End -->
+
+    <div class="card-body" style="max-width: 100%; max-height: 100%;">
+        @Html.Raw(Model.Body)
     </div>
 
 
-    <!-- Post Author Bio Box Start -->
-    <div class="about-author margin-top-70 margin-bottom-50">
 
-        <div class="picture">
-            <img src="@Model.Author.ProfileImage" class="img-responsive img-thumbnail" alt="">
-        </div>
-
-        <div class="c-padding">
-            <h3>
-                Article By <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank" data-toggle="tooltip" data-placement="top" title="View more from @Model.Author.FirstName">@Model.Author.FirstName @Model.Author.LastName</a>
-            </h3>
-            @if (!string.IsNullOrWhiteSpace(Model.Author.Bio))
-            {
-                <p>@Model.Author.Bio</p>
-            }
-            else
-            {
-                <p>&nbsp;</p>
-            }
-        </div>
-    </div>
-    <!-- Post Author Bio Box End -->
-    <!-- Post Comment (Disqus) Start -->
-    <div id="comment" class="comment">
-        <h3>Add a comment</h3>
-
-        <!-- Disqus Code Start -->
-        @* Embed your own Discus code snippet here *@
-        <!-- Disqus Code End -->
-
-    </div>
-    <!-- Post Comment (Disqus) End -->
-
-</div>
 
 

@@ -7,7 +7,7 @@ namespace buttercms_dotnet_tutorial.Configuration
 {
     public class ButterCmsOptions
     {
-        public string ApiKey { get; set; } = "7409d6a1280930a7271d31c985de5337ee174085";
+        public string ApiKey { get; set; } = "YOUR KEY";
         public int BlogPostsPerPage { get; set; }
         public string PrimaryAuthorSlug { get; set; }
     }

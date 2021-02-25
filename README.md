@@ -352,6 +352,7 @@ Now we can get started with ButterCMS pages
 # Pages
 # Pages structure 
 Before making the logic for Pages make sure your page strucutre is set up and that you already have at least one made.
+
 ![alt text](https://buttercms.com/static/images/docs/guides/PagesNewSinglePage.d6038e2b75a0.png)
 ## Pages Models
 In the ```Models``` folder you'll want to create ```CaseStudyViewModel.cs``` and it will look like this:

@@ -23,12 +23,8 @@ namespace buttercms_dotnet_tutorial.Controllers
             public string customer_logo { get; set; }
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <returns></returns>
+
+
         [Route("customers/")]
         public ActionResult Index(int page = 1, int pageSize = 10)
         {

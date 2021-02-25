@@ -35,30 +35,7 @@ namespace buttercms_dotnet_tutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddResponseCaching();
-            services.AddMvc(options =>
-            {
-                options.CacheProfiles.Add("7days", new CacheProfile
-                {
-                    Duration = 604800,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-                options.CacheProfiles.Add("2days", new CacheProfile
-                {
-                    Duration = 172800,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-                options.CacheProfiles.Add("1days", new CacheProfile
-                {
-                    Duration = 86400,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-            });
-
-            services.AddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
+          
 
             services.AddSingleton<IWebHostEnvironment>(HostingEnvironment);
 

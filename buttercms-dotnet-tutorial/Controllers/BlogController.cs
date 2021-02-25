@@ -25,7 +25,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         [Route("p/{page}")]
         [Route("blog")]
         [Route("blog/p/{page}")]
-        [ResponseCache(CacheProfileName = "2days")]
+
         public async Task<IActionResult> ListAllPosts(int page = 1)
         {
             var postsPerPage = 10;
@@ -51,7 +51,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         }
 
         [Route("blog/{slug}")]
-        [ResponseCache(CacheProfileName = "7days")]
+   
         public async Task<ActionResult> PostDetail(string slug)
         {
             var response = await Cache.GetOrCreateAsync($"post|by-slug|{slug}", async entry =>

@@ -1,24 +1,56 @@
 ﻿
 @{
     ViewData["Title"] = "ShowCaseStudy";
-    
+
 }
 
 @model CaseStudyViewModel
-<html>
-<head>
-    <title>@Model.SeoTitle</title>
-    <meta property="og:title" content="@Model.FacebookOGTitle" />
-</head>
-<body class="container">
-    <h1>@Model.Headline</h1>
-    <p>@Model.FacebookOGTitle</p>
-    <div class="row">
-        <img class="mr-auto w-50 h-100 col-5" src="@Model.CustomerLogo">
-        <p class="col-5">Study date: <time datetime="2020-08-30T00:00:00">August 30, 2020</time></p>
-    </div>
-    <p class="mt-5">@Model.Testimonial</p>
-    
-</body>
-</html>
 
+
+
+<p class="mt-5">@Html.Raw(Model.Readme)</p>
+<h1>SEO</h1>
+@foreach (var item in Model.Seo)
+{
+
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        <li>@Html.DisplayFor(modelItem => item.Value);</li>
+    </ul>
+}
+
+<h1>Open Graph</h1>
+@foreach (var item in Model.openGraph)
+{
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        @if (item.Value.Contains("http"))
+        {
+            <li><img src="@Html.DisplayFor(modelItem => item.Value)" /></li>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.Value)
+        }
+
+
+    </ul>
+}
+
+<h1>Twitter Card</h1>
+@foreach (var item in Model.twitterCard)
+{
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        @if (item.Value.Contains("http"))
+        {
+            <li><img src="@Html.DisplayFor(modelItem => item.Value)" /></li>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.Value)
+        }
+
+
+    </ul>
+}

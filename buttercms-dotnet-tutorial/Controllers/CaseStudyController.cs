@@ -15,12 +15,19 @@ namespace buttercms_dotnet_tutorial.Controllers
     {
         public class CaseStudyPage
         {
+           
+            public string readme { get; set; }
+            
             public string slug { get; set; }
-            public string facebook_open_graph_title { get; set; }
-            public string seo_title { get; set; }
-            public string headline { get; set; }
-            public string testimonial { get; set; }
-            public string customer_logo { get; set; }
+            
+    
+           public Dictionary<string, string> seo { get; set; }
+
+           public Dictionary<string, string> twitter_card { get; set; }
+
+           public Dictionary<string, string>  open_graph { get; set; }
+
+            
 
         }
 
@@ -38,6 +45,8 @@ namespace buttercms_dotnet_tutorial.Controllers
 
             };
 
+            var paramterDict = new Dictionary<string, string>();
+            
             PagesResponse<CaseStudyPage> caseStudyPages = butterClient.ListPages<CaseStudyPage>("customer_case_study", parameterDict);
 
             var viewModel = new CaseStudiesViewModel();
@@ -45,22 +54,16 @@ namespace buttercms_dotnet_tutorial.Controllers
             viewModel.NextPageNumber = caseStudyPages.Meta.NextPage;
             viewModel.PagesCount = caseStudyPages.Meta.Count;
 
-
             viewModel.CaseStudies = new List<CaseStudyViewModel>();
-            foreach (Page<CaseStudyPage> caseStudy in caseStudyPages.Data)
-            {
-                CaseStudyViewModel caseStudyViewModel = new CaseStudyViewModel();
-
-                caseStudyViewModel.FacebookOGTitle = caseStudy.Fields.facebook_open_graph_title;
-                caseStudyViewModel.SeoTitle = caseStudy.Fields.seo_title;
-                caseStudyViewModel.Headline = caseStudy.Fields.headline;
-                caseStudyViewModel.Testimonial = caseStudy.Fields.testimonial;
-                caseStudyViewModel.CustomerLogo = caseStudy.Fields.customer_logo;
-                caseStudyViewModel.Slug = caseStudy.Slug;
-
-                viewModel.CaseStudies.Add(caseStudyViewModel);
-            }
-
+            PageResponse<CaseStudyPage> myPage = butterClient.RetrievePage<CaseStudyPage>("*", "sample-page", parameterDict);
+            CaseStudyViewModel caseStudyViewModel = new CaseStudyViewModel();
+            caseStudyViewModel.Readme = myPage.Data.Fields.readme;
+            caseStudyViewModel.Seo = myPage.Data.Fields.seo;
+            caseStudyViewModel.twitterCard = myPage.Data.Fields.twitter_card;
+            caseStudyViewModel.openGraph = myPage.Data.Fields.open_graph;
+            caseStudyViewModel.Slug = myPage.Data.Slug;
+            viewModel.CaseStudies.Add(caseStudyViewModel);
+           
             return View(viewModel);
         }
 
@@ -74,11 +77,11 @@ namespace buttercms_dotnet_tutorial.Controllers
             PageResponse<CaseStudyPage> caseStudy = await butterClient.RetrievePageAsync<CaseStudyPage>("*", slug);
 
             var viewModel = new CaseStudyViewModel();
-            viewModel.FacebookOGTitle = caseStudy.Data.Fields.facebook_open_graph_title;
-            viewModel.SeoTitle = caseStudy.Data.Fields.seo_title;
-            viewModel.Headline = caseStudy.Data.Fields.headline;
-            viewModel.Testimonial = caseStudy.Data.Fields.testimonial;
-            viewModel.CustomerLogo = caseStudy.Data.Fields.customer_logo;
+            viewModel.Readme = caseStudy.Data.Fields.readme;
+            viewModel.Seo = caseStudy.Data.Fields.seo;
+            viewModel.twitterCard = caseStudy.Data.Fields.twitter_card;
+            viewModel.openGraph = caseStudy.Data.Fields.open_graph;
+            
 
             return View(viewModel);
         }

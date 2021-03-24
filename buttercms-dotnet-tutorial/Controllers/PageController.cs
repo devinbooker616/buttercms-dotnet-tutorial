@@ -11,9 +11,9 @@ using buttercms_dotnet_tutorial.Models;
 
 namespace buttercms_dotnet_tutorial.Controllers
 {
-    public class CaseStudyController : Controller
+    public class PageController : Controller
     {
-        public class CaseStudyPage
+        public class Page
         {
            
             public string readme { get; set; }
@@ -36,7 +36,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
 
-            var butterClient = new ButterCMSClient("YOUR KEY");
+            var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
 
             var parameterDict = new Dictionary<string, string>()
             {
@@ -47,16 +47,13 @@ namespace buttercms_dotnet_tutorial.Controllers
 
             var paramterDict = new Dictionary<string, string>();
             
-            PagesResponse<CaseStudyPage> caseStudyPages = butterClient.ListPages<CaseStudyPage>("customer_case_study", parameterDict);
+            PagesResponse<Page> caseStudyPages = butterClient.ListPages<Page>("sample-page", parameterDict);
 
-            var viewModel = new CaseStudiesViewModel();
-            viewModel.PreviousPageNumber = caseStudyPages.Meta.PreviousPage;
-            viewModel.NextPageNumber = caseStudyPages.Meta.NextPage;
-            viewModel.PagesCount = caseStudyPages.Meta.Count;
+            var viewModel = new PagesViewModel();
 
-            viewModel.CaseStudies = new List<CaseStudyViewModel>();
-            PageResponse<CaseStudyPage> myPage = butterClient.RetrievePage<CaseStudyPage>("*", "sample-page", parameterDict);
-            CaseStudyViewModel caseStudyViewModel = new CaseStudyViewModel();
+            viewModel.CaseStudies = new List<PageViewModel>();
+            PageResponse<Page> myPage = butterClient.RetrievePage<Page>("*", "sample-page", parameterDict);
+            PageViewModel caseStudyViewModel = new PageViewModel();
             caseStudyViewModel.Readme = myPage.Data.Fields.readme;
             caseStudyViewModel.Seo = myPage.Data.Fields.seo;
             caseStudyViewModel.twitterCard = myPage.Data.Fields.twitter_card;
@@ -72,11 +69,11 @@ namespace buttercms_dotnet_tutorial.Controllers
         public async Task<ActionResult> ShowCaseStudy(string slug)
 
         {
-            var butterClient = new ButterCMSClient("YOUR KEY");
+            var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
 
-            PageResponse<CaseStudyPage> caseStudy = await butterClient.RetrievePageAsync<CaseStudyPage>("*", slug);
+            PageResponse<Page> caseStudy = await butterClient.RetrievePageAsync<Page>("*", slug);
 
-            var viewModel = new CaseStudyViewModel();
+            var viewModel = new PageViewModel();
             viewModel.Readme = caseStudy.Data.Fields.readme;
             viewModel.Seo = caseStudy.Data.Fields.seo;
             viewModel.twitterCard = caseStudy.Data.Fields.twitter_card;

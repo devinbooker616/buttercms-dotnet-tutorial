@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace buttercms_dotnet_tutorial.Models
 {
-    public class CaseStudyViewModel
+    public class PageViewModel
     {
         public string Readme { get; set; }
 

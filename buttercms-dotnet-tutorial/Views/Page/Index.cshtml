@@ -1,5 +1,5 @@
 ﻿
-@model CaseStudiesViewModel
+@model PagesViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -12,13 +12,7 @@
     }
 }
 </style>
-<div>
-    <a href="/customers/?page=@Model.PreviousPageNumber&pageSize=10">Previous page</a>
-    <a href="/customers/?page=@Model.NextPageNumber&pageSize=10">Next page</a>
-</div>
-<div>
-    <p>@Model.PagesCount customers total</p>
-</div>
+
 
 <h2 class="text-2xl md:text-4xl font-bold tracking-tight md:tracking-tighter leading-tight px-4 mb-20 mt-8">Case studies</h2>
 @foreach (var pages in Model.CaseStudies)

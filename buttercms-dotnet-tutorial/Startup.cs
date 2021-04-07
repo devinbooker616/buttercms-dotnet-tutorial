@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using buttercms_dotnet_tutorial.Configuration;
+
 
 namespace buttercms_dotnet_tutorial
 {
@@ -43,8 +43,7 @@ namespace buttercms_dotnet_tutorial
             //services.Configure<UrlOptions>(Configuration.GetSection("UrlOptions"));
             //services.Configure<ButterCmsOptions>(Configuration.GetSection("ButterCMSOptions"));
 
-            services.AddScoped<ButterCMSClient>(c =>
-                new ButterCMSClient(c.GetRequiredService<IOptions<ButterCmsOptions>>().Value.ApiKey));
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

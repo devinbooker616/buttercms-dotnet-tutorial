@@ -1,38 +1,24 @@
-﻿@model ButterCMS.Models.Post;
-@{
-    ViewBag.Title = Model.SeoTitle;
-    ViewBag.Author = Model.Author;
+﻿
+<h2>@ViewBag.Post.Title</h2>
+
+Published @ViewBag.Post.Published.ToString("d/M/yyyy")
+@if (@ViewBag.Post.Categories.Count > 0)
+{
+    @Html.Raw("in")
+}
+@foreach (var category in @ViewBag.Post.Categories)
+{
+    <a href="/category/@Uri.EscapeDataString(category.Slug)">@category.Name</a>
 }
 
-<style>
-    .img {
-        max-height: 100%;
-        max-width: 100%;
-    }
-</style>
+<br />
 
-<div class="col-xs-6">
-    <a href="/" title="Go to Home Page"><i class="fas fa-arrow-left"></i> Back Home</a>
+<a href="/author/@Uri.EscapeDataString(ViewBag.Post.Author.Slug)">
+    @ViewBag.Post.Author.FirstName @ViewBag.Post.Author.LastName
+</a>
+
+<br />
+
+<div>
+    @Html.Raw(ViewBag.Post.Body)
 </div>
-
-
-
-<!-- Post Headline Start -->
-<div class="post-title">
-    <h1>@Model.Title</h1>
-</div>
-
-<h2>@Model.Author.FirstName @Model.Author.LastName</h2>
-<!-- Post Headline End -->
-<!-- Post Detail Start -->
-
-<!-- Post Detail End -->
-
-    <div class="card-body" style="max-width: 100%; max-height: 100%;">
-        @Html.Raw(Model.Body)
-    </div>
-
-
-
-
-

@@ -6,62 +6,39 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using buttercms_dotnet_tutorial.Configuration;
 using buttercms_dotnet_tutorial.Models;
 
 namespace buttercms_dotnet_tutorial.Controllers
 {
-    public class BlogController : BaseController
+    public class BlogController : Controller
     {
-        public IActionResult Index()
+        private ButterCMSClient Client;
+
+        private static string _apiToken = "7409d6a1280930a7271d31c985de5337ee174085";
+
+        public BlogController()
         {
-            return View();
-        }
-        public BlogController(IWebHostEnvironment hostingEnvironment, IOptions<UrlOptions> urlOptions, IOptions<ButterCmsOptions> siteOptions, ButterCMSClient client, IMemoryCache cache) : base(hostingEnvironment, urlOptions, siteOptions, client, cache)
-        {
+            Client = new ButterCMSClient(_apiToken);
         }
 
-
-        [Route("p/{page}")]
+        
         [Route("blog")]
         [Route("blog/p/{page}")]
-
-        public async Task<IActionResult> ListAllPosts(int page = 1)
+        public async Task<ActionResult> ListAllPosts(int page = 1)
         {
-            var postsPerPage = 10;
-
-            var response = await Cache.GetOrCreateAsync($"posts|all|{postsPerPage}|{page}", async entry =>
-            {
-                entry.Value = (await Client.ListPostsAsync(page, postsPerPage));
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(2);
-                return (PostsResponse)entry.Value;
-            });
-            
-            var model = new BlogListViewModel
-            {
-                Posts = response.Data,
-                Count = response.Meta.Count,
-                NextPage = response.Meta.NextPage,
-                CurrentPage = page,
-                PreviousPage = response.Meta.PreviousPage,
-                TotalPages = Convert.ToInt32(Math.Floor(decimal.Divide(response.Meta.Count, postsPerPage)))
-            };
-
-            return View(model);
+            var response = await Client.ListPostsAsync(page, 10);
+            ViewBag.Posts = response.Data;
+            ViewBag.NextPage = response.Meta.NextPage;
+            ViewBag.PreviousPage = response.Meta.PreviousPage;
+            return View();
         }
 
         [Route("blog/{slug}")]
-   
-        public async Task<ActionResult> PostDetail(string slug)
+        public async Task<ActionResult> ShowPost(string slug)
         {
-            var response = await Cache.GetOrCreateAsync($"post|by-slug|{slug}", async entry =>
-            {
-                entry.Value = await Client.RetrievePostAsync(slug);
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(7);
-                return (PostResponse)entry.Value;
-            });
-            
-            return View(response.Data);
+            var response = await Client.RetrievePostAsync(slug);
+            ViewBag.Post = response.Data;
+            return View("PostDetail");
         }
     }
 }

@@ -1,43 +1,19 @@
-﻿@model buttercms_dotnet_tutorial.Models.BlogListViewModel
-@{
-    ViewBag.Title = "Blog";
-}
+﻿<h2>Posts</h2>
 
-    <h2 class="text-2xl md:text-4xl font-bold tracking-tight md:tracking-tighter leading-tight px-4 mb-20 mt-8">Blog</h2>
-
-    <div class="container">
-        <div class="row">
-                @Html.DisplayFor(m => m.Posts)
-            </div>
-    </div>
-  
-
-
-
-@if (Model.TotalPages > 1)
+@foreach (var post in ViewBag.Posts)
 {
-    if (Model.PreviousPage != null)
-    {
-        <a href="/p/@Model.PreviousPage">Prev</a>
-    }
-
-    for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        if (i == Model.CurrentPage)
-        {
-
-            <span class="page-number active">@i</span>
-        }
-        else
-        {
-            <span class="page-number"><a href="/p/@i">@i</a></span>
-        }
-
-    }
-
-    if (ViewBag.NextPage != null)
-    {
-        <a href="/p/@Model.NextPage">Next</a>
-    }
+    <a href="/blog/@Uri.EscapeDataString(post.Slug)">@post.Title</a>
+    @Html.Raw("by")
+    <a href="/author/@Uri.EscapeDataString(post.Author.Slug)">@post.Author.FirstName @post.Author.LastName</a>
+    <br />
 }
 
+@if (ViewBag.PreviousPage != null)
+{
+    <a href="/blog/p/@ViewBag.PreviousPage">Prev</a>
+}
+
+@if (ViewBag.NextPage != null)
+{
+    <a href="/blog/p/@ViewBag.NextPage">Next</a>
+}

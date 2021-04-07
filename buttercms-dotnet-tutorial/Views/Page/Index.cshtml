@@ -15,6 +15,7 @@
 
 
 <h2 class="text-2xl md:text-4xl font-bold tracking-tight md:tracking-tighter leading-tight px-4 mb-20 mt-8">Case studies</h2>
+, nm 
 @foreach (var pages in Model.CaseStudies)
 {
 <div class="container mx-auto px-5">
@@ -22,11 +23,13 @@
         <div class="grid grid-flow-col auto-rows-max gap-4 mb-5 row">
             <div style="position: relative; width: 300px; height: 300px;">
                 <a href="/customers">
+                    
                     <div style="display: block; overflow: hidden; position: absolute; inset: 0px; box-sizing: border-box; margin: 0px; border: solid 1px black;">
                         @*<img alt="@pages.Headline" src="@pages.CustomerLogo" decoding="async" class="rounded-lg" sizes="(max-width: 640px) 640px, (max-width: 750px) 750px, (max-width: 828px) 828px, (max-width: 1080px) 1080px, (max-width: 1200px) 1200px, (max-width: 1920px) 1920px, (max-width: 2048px) 2048px, 3840px" style="visibility: visible; position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;">*@
                     </div>
                 </a>
             </div>
+            
             <div class="col-8 mobile-pages">
                 <h3 class="text-3xl mb-3 mt-3 leading-snug">
                     <a class="hover:underline" href="/customers/@pages.Slug">Sample Page</a>

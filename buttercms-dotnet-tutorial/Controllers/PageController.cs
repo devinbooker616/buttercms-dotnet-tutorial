@@ -36,7 +36,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
 
-            var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
+            var butterClient = new ButterCMSClient("");
 
             var parameterDict = new Dictionary<string, string>()
             {
@@ -69,7 +69,7 @@ namespace buttercms_dotnet_tutorial.Controllers
         public async Task<ActionResult> ShowCaseStudy(string slug)
 
         {
-            var butterClient = new ButterCMSClient("7409d6a1280930a7271d31c985de5337ee174085");
+            var butterClient = new ButterCMSClient("");
 
             PageResponse<Page> caseStudy = await butterClient.RetrievePageAsync<Page>("*", slug);
 

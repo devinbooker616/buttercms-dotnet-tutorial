@@ -351,12 +351,12 @@ Now we can get started with ButterCMS pages
 
 # Pages
 # Pages structure 
-Before making the logic for Pages make sure your page strucutre is set up and that you already have at least one made.
+Before making the logic for Pages make sure your page strucutre (which it should already be with the sample page) is set up and that you already have at least one made.
 
-![alt text](https://buttercms.com/static/images/docs/guides/PagesNewSinglePage.d6038e2b75a0.png)
 ## Pages Models
-In the ```Models``` folder you'll want to create ```CaseStudyViewModel.cs``` and it will look like this:
+In the ```Models``` folder you'll want to create ```PageViewModel.cs``` and it will look like this:
 ```csharp 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -364,19 +364,24 @@ using System.Threading.Tasks;
 
 namespace buttercms_dotnet_tutorial.Models
 {
-    public class CaseStudyViewModel
+    public class PageViewModel
     {
-        public string FacebookOGTitle { get; set; }
-        public string SeoTitle { get; set; }
-        public string Headline { get; set; }
-        public string Testimonial { get; set; }
-        public string CustomerLogo { get; set; }
+        public string Readme { get; set; }
+
+        public string Name { get; set; }
         public string Slug { get; set; }
+
+        public Dictionary<string, string> Seo { get; set; }
+
+        public Dictionary<string, string> twitterCard { get; set; }
+
+        public Dictionary<string, string> openGraph { get; set; }
+
     }
 }
 ```
 
-amd then make ```CaseStudiesViewModel.cs``` in the ```Models``` folder which will look like this: 
+amd then make ```PagesViewModel.cs``` in the ```Models``` folder which will look like this: 
 ```csharp 
 using System;
 using System.Collections.Generic;
@@ -385,9 +390,9 @@ using System.Threading.Tasks;
 
 namespace buttercms_dotnet_tutorial.Models
 {
-    public class CaseStudiesViewModel
+    public class PagesViewModel
     {
-        public List<CaseStudyViewModel> CaseStudies { get; set; }
+        public List<PageViewModel> CaseStudies { get; set; }
         public int? PreviousPageNumber { get; set; }
         public int? NextPageNumber { get; set; }
         public int PagesCount { get; set; }
@@ -397,7 +402,7 @@ namespace buttercms_dotnet_tutorial.Models
 Now with the ```Models``` made, we can start on the controller. 
 
 ## Pages Controller
-Go into the ```Controllers``` folder and add a file called ```CaseStudyController.cs``` and the file will contain this code:
+Go into the ```Controllers``` folder and add a file called ```PageController.cs``` and the file will contain this code:
 ```csharp 
 using System;
 using System.Collections.Generic;
@@ -412,20 +417,28 @@ using buttercms_dotnet_tutorial.Models;
 
 namespace buttercms_dotnet_tutorial.Controllers
 {
-    public class CaseStudyController : Controller
+    public class PageController : Controller
     {
-        public class CaseStudyPage
+        public class Page
         {
+           
+            public string readme { get; set; }
+            
             public string slug { get; set; }
-            public string facebook_open_graph_title { get; set; }
-            public string seo_title { get; set; }
-            public string headline { get; set; }
-            public string testimonial { get; set; }
-            public string customer_logo { get; set; }
+            
+    
+           public Dictionary<string, string> seo { get; set; }
+
+           public Dictionary<string, string> twitter_card { get; set; }
+
+           public Dictionary<string, string>  open_graph { get; set; }
+
+            
 
         }
-      
-        [Route("customers/")]
+
+
+        [Route("pages/")]
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
 
@@ -438,47 +451,40 @@ namespace buttercms_dotnet_tutorial.Controllers
 
             };
 
-            PagesResponse<CaseStudyPage> caseStudyPages = butterClient.ListPages<CaseStudyPage>("customer_case_study", parameterDict);
+            var paramterDict = new Dictionary<string, string>();
+            
+            PagesResponse<Page> caseStudyPages = butterClient.ListPages<Page>("sample-page", parameterDict);
 
-            var viewModel = new CaseStudiesViewModel();
-            viewModel.PreviousPageNumber = caseStudyPages.Meta.PreviousPage;
-            viewModel.NextPageNumber = caseStudyPages.Meta.NextPage;
-            viewModel.PagesCount = caseStudyPages.Meta.Count;
+            var viewModel = new PagesViewModel();
 
-
-            viewModel.CaseStudies = new List<CaseStudyViewModel>();
-            foreach (Page<CaseStudyPage> caseStudy in caseStudyPages.Data)
-            {
-                CaseStudyViewModel caseStudyViewModel = new CaseStudyViewModel();
-
-                caseStudyViewModel.FacebookOGTitle = caseStudy.Fields.facebook_open_graph_title;
-                caseStudyViewModel.SeoTitle = caseStudy.Fields.seo_title;
-                caseStudyViewModel.Headline = caseStudy.Fields.headline;
-                caseStudyViewModel.Testimonial = caseStudy.Fields.testimonial;
-                caseStudyViewModel.CustomerLogo = caseStudy.Fields.customer_logo;
-                caseStudyViewModel.Slug = caseStudy.Slug;
-
-                viewModel.CaseStudies.Add(caseStudyViewModel);
-            }
-
+            viewModel.CaseStudies = new List<PageViewModel>();
+            PageResponse<Page> myPage = butterClient.RetrievePage<Page>("*", "sample-page", parameterDict);
+            PageViewModel caseStudyViewModel = new PageViewModel();
+            caseStudyViewModel.Readme = myPage.Data.Fields.readme;
+            caseStudyViewModel.Seo = myPage.Data.Fields.seo;
+            caseStudyViewModel.twitterCard = myPage.Data.Fields.twitter_card;
+            caseStudyViewModel.openGraph = myPage.Data.Fields.open_graph;
+            caseStudyViewModel.Slug = myPage.Data.Slug;
+            viewModel.CaseStudies.Add(caseStudyViewModel);
+           
             return View(viewModel);
         }
 
 
-        [Route("customers/{slug}")]
+        [Route("pages/{slug}")]
         public async Task<ActionResult> ShowCaseStudy(string slug)
 
         {
             var butterClient = new ButterCMSClient("YOUR KEY");
- 
-            PageResponse<CaseStudyPage> caseStudy = await butterClient.RetrievePageAsync<CaseStudyPage>("*", slug);
 
-            var viewModel = new CaseStudyViewModel();
-            viewModel.FacebookOGTitle = caseStudy.Data.Fields.facebook_open_graph_title;
-            viewModel.SeoTitle = caseStudy.Data.Fields.seo_title;
-            viewModel.Headline = caseStudy.Data.Fields.headline;
-            viewModel.Testimonial = caseStudy.Data.Fields.testimonial;
-            viewModel.CustomerLogo = caseStudy.Data.Fields.customer_logo;
+            PageResponse<Page> caseStudy = await butterClient.RetrievePageAsync<Page>("*", slug);
+
+            var viewModel = new PageViewModel();
+            viewModel.Readme = caseStudy.Data.Fields.readme;
+            viewModel.Seo = caseStudy.Data.Fields.seo;
+            viewModel.twitterCard = caseStudy.Data.Fields.twitter_card;
+            viewModel.openGraph = caseStudy.Data.Fields.open_graph;
+            
 
             return View(viewModel);
         }
@@ -489,11 +495,11 @@ namespace buttercms_dotnet_tutorial.Controllers
 With the ```Controllers``` and ```Models``` made all that is left to do is add files to the ```Views``` folder. In the ```Views``` folder we’re gonna add another folder and in that folder will be two files. 
 
 ## Pages Views
-First, in ```Views```, make a folder called ```CaseStudy``` then add ```Index.cshtml```. The contents of ```Index.cshtml``` will look as such:
+First, in ```Views```, make a folder called ```Page``` then add ```Index.cshtml```. The contents of ```Index.cshtml``` will look as such:
  
  ```Index.cshtml```:
 ```cshtml 
-@model CaseStudiesViewModel
+@model PagesViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -506,13 +512,7 @@ First, in ```Views```, make a folder called ```CaseStudy``` then add ```Index.cs
     }
 }
 </style>
-<div>
-    <a href="/customers/?page=@Model.PreviousPageNumber&pageSize=10">Previous page</a>
-    <a href="/customers/?page=@Model.NextPageNumber&pageSize=10">Next page</a>
-</div>
-<div>
-    <p>@Model.PagesCount customers total</p>
-</div>
+
 
 <h2 class="text-2xl md:text-4xl font-bold tracking-tight md:tracking-tighter leading-tight px-4 mb-20 mt-8">Case studies</h2>
 @foreach (var pages in Model.CaseStudies)
@@ -521,15 +521,15 @@ First, in ```Views```, make a folder called ```CaseStudy``` then add ```Index.cs
 
         <div class="grid grid-flow-col auto-rows-max gap-4 mb-5 row">
             <div style="position: relative; width: 300px; height: 300px;">
-                <a href="/customers/@pages.Slug">
+                <a href="/customers">
                     <div style="display: block; overflow: hidden; position: absolute; inset: 0px; box-sizing: border-box; margin: 0px; border: solid 1px black;">
-                        <img alt="@pages.Headline" src="@pages.CustomerLogo" decoding="async" class="rounded-lg" sizes="(max-width: 640px) 640px, (max-width: 750px) 750px, (max-width: 828px) 828px, (max-width: 1080px) 1080px, (max-width: 1200px) 1200px, (max-width: 1920px) 1920px, (max-width: 2048px) 2048px, 3840px" style="visibility: visible; position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;">
+                        @*<img alt="@pages.Headline" src="@pages.CustomerLogo" decoding="async" class="rounded-lg" sizes="(max-width: 640px) 640px, (max-width: 750px) 750px, (max-width: 828px) 828px, (max-width: 1080px) 1080px, (max-width: 1200px) 1200px, (max-width: 1920px) 1920px, (max-width: 2048px) 2048px, 3840px" style="visibility: visible; position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;">*@
                     </div>
                 </a>
             </div>
             <div class="col-8 mobile-pages">
                 <h3 class="text-3xl mb-3 mt-3 leading-snug">
-                    <a class="hover:underline" href="/customers/@pages.Slug">@pages.Headline</a>
+                    <a class="hover:underline" href="/customers/@pages.Slug">Sample Page</a>
                 </h3>
                 Study date: <time datetime="2020-08-30T00:00:00">August	30, 2020</time>
                 <div>
@@ -546,26 +546,59 @@ Now we can make the ```ShowCaseStudy.cshtml``` file which will contain this:
 
 @{
     ViewData["Title"] = "ShowCaseStudy";
-    
+
 }
 
-@model CaseStudyViewModel
-<html>
-<head>
-    <title>@Model.SeoTitle</title>
-    <meta property="og:title" content="@Model.FacebookOGTitle" />
-</head>
-<body class="container">
-    <h1>@Model.Headline</h1>
-    <p>@Model.FacebookOGTitle</p>
-    <div class="row">
-        <img class="mr-auto w-50 h-100 col-5" src="@Model.CustomerLogo">
-        <p class="col-5">Study date: <time datetime="2020-08-30T00:00:00">August 30, 2020</time></p>
-    </div>
-    <p class="mt-5">@Model.Testimonial</p>
-    
-</body>
-</html>
+@model PageViewModel
+
+
+
+<p class="mt-5">@Html.Raw(Model.Readme)</p>
+<h1>SEO</h1>
+@foreach (var item in Model.Seo)
+{
+
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        <li>@Html.DisplayFor(modelItem => item.Value);</li>
+    </ul>
+}
+
+<h1>Open Graph</h1>
+@foreach (var item in Model.openGraph)
+{
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        @if (item.Value.Contains("http"))
+        {
+            <li><img src="@Html.DisplayFor(modelItem => item.Value)" /></li>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.Value)
+        }
+
+
+    </ul>
+}
+
+<h1>Twitter Card</h1>
+@foreach (var item in Model.twitterCard)
+{
+    <ul>
+        <h1><label>@Html.DisplayFor(modelItem => item.Key)</label></h1>
+        @if (item.Value.Contains("http"))
+        {
+            <li><img src="@Html.DisplayFor(modelItem => item.Value)" /></li>
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.Value)
+        }
+
+
+    </ul>
+}
 
 
 ```

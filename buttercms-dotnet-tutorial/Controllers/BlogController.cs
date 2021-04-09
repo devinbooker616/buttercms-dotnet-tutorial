@@ -14,7 +14,7 @@ namespace buttercms_dotnet_tutorial.Controllers
     {
         private ButterCMSClient Client;
 
-        private static string _apiToken = "";
+        private static string _apiToken = "YOUR KEY";
 
         public BlogController()
         {

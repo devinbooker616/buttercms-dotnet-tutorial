@@ -13,163 +13,7 @@ In Visual Studio, open the Package Manager Console and run:
 ```Install-Package ButterCMS```
 
 # Configuration
-With the nuget package installed we can start doing some basic setup for the whole project. First we’re gonna add a new folder to the project called ```Configuration``` and it will contain three files. 
-
-Important note: Everywhere it says "YOUR KEY" is where you will want to put the API key ButterCMS gives you.
-
-First make a folder named ```Configuration```. The first file we’ll make will be called ```ButterCmsOptions.cs``` and it will be a model:
-
-```csharp 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace buttercms_dotnet_tutorial.Configuration
-{
-    public class ButterCmsOptions
-    {
-        public string ApiKey { get; set; } = "YOUR KEY";
-        public int BlogPostsPerPage { get; set; }
-        public string PrimaryAuthorSlug { get; set; }
-    }
-}
-```
-Then make another file in the same folder called ```RedirectToNonWwwRule.cs``` that will contain this code: 
-```csharp 
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Net.Http.Headers;
-
-namespace buttercms_dotnet_tutorial.Configuration
-{
-    public class RedirectToNonWwwRule : IRule
-    {
-        public virtual void ApplyRule(RewriteContext context)
-        {
-            var req = context.HttpContext.Request;
-            if (req.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Result = RuleResult.ContinueRules;
-                return;
-            }
-
-            if (!req.Host.Value.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Result = RuleResult.ContinueRules;
-                return;
-            }
-
-            var wwwHost = new HostString($"{req.Host.Value.Replace("www.", string.Empty)}");
-            var newUrl = UriHelper.BuildAbsolute(req.Scheme, wwwHost, req.PathBase, req.Path, req.QueryString);
-            var response = context.HttpContext.Response;
-            response.StatusCode = 301;
-            response.Headers[HeaderNames.Location] = newUrl;
-            context.Result = RuleResult.EndResponse;
-        }
-    }
-
-    public static class RewriteOptionsExtensions
-    {
-        public static RewriteOptions AddRedirectToNonWww(this RewriteOptions options)
-        {
-            options.Rules.Add(new RedirectToNonWwwRule());
-            return options;
-        }
-    }
-}
-```
-and the final file will be called ```UrlOptions.cs``` and it is also a model:
-```csharp 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace buttercms_dotnet_tutorial.Configuration
-{
-    public class UrlOptions
-    {
-        public string BaseUrl { get; set; }
-    }
-}
-```
-
-Now with all of that made we can move onto setting up the ```BaseController.cs```. The ```BaseController``` will be inherited by the ```BlogController``` later on. Go to the ```Controllers``` folder and make a file called ```BaseController.cs``` and add this code:
-```csharp
-using System;
-using System.Threading.Tasks;
-using ButterCMS;
-using ButterCMS.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using buttercms_dotnet_tutorial.Configuration;
-using buttercms_dotnet_tutorial.Models;
-
-namespace buttercms_dotnet_tutorial.Controllers
-{
-    public class BlogController : BaseController
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-        public BlogController(IWebHostEnvironment hostingEnvironment, IOptions<UrlOptions> urlOptions, IOptions<ButterCmsOptions> siteOptions, ButterCMSClient client, IMemoryCache cache) : base(hostingEnvironment, urlOptions, siteOptions, client, cache)
-        {
-        }
-
-
-        [Route("p/{page}")]
-        [Route("blog")]
-        [Route("blog/p/{page}")]
-        [ResponseCache(CacheProfileName = "2days")]
-        public async Task<IActionResult> ListAllPosts(int page = 1)
-        {
-            var postsPerPage = 10;
-
-            var response = await Cache.GetOrCreateAsync($"posts|all|{postsPerPage}|{page}", async entry =>
-            {
-                entry.Value = (await Client.ListPostsAsync(page, postsPerPage));
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(2);
-                return (PostsResponse)entry.Value;
-            });
-            
-            var model = new BlogListViewModel
-            {
-                Posts = response.Data,
-                Count = response.Meta.Count,
-                NextPage = response.Meta.NextPage,
-                CurrentPage = page,
-                PreviousPage = response.Meta.PreviousPage,
-                TotalPages = Convert.ToInt32(Math.Floor(decimal.Divide(response.Meta.Count, postsPerPage)))
-            };
-
-            return View(model);
-        }
-
-        [Route("blog/{slug}")]
-        [ResponseCache(CacheProfileName = "7days")]
-        public async Task<ActionResult> PostDetail(string slug)
-        {
-            var response = await Cache.GetOrCreateAsync($"post|by-slug|{slug}", async entry =>
-            {
-                entry.Value = await Client.RetrievePostAsync(slug);
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(7);
-                return (PostResponse)entry.Value;
-            });
-            
-            return View(response.Data);
-        }
-    }
-}
-```
-This controller will be inherited by the ```BlogController``` later down the line.
-
-Lastly go to the ```Startup.cs``` file that comes included with all projects once created and copy this code:
+Go to the ```Startup.cs``` file that comes included with all projects once created and copy this code:
 ```csharp
 using System;
 using System.Collections.Generic;
@@ -186,7 +30,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using buttercms_dotnet_tutorial.Configuration;
+
 
 namespace buttercms_dotnet_tutorial
 {
@@ -208,30 +52,7 @@ namespace buttercms_dotnet_tutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddResponseCaching();
-            services.AddMvc(options =>
-            {
-                options.CacheProfiles.Add("7days", new CacheProfile
-                {
-                    Duration = 604800,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-                options.CacheProfiles.Add("2days", new CacheProfile
-                {
-                    Duration = 172800,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-                options.CacheProfiles.Add("1days", new CacheProfile
-                {
-                    Duration = 86400,
-                    Location = ResponseCacheLocation.Any,
-                    
-                });
-            });
-
-            services.AddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
+          
 
             services.AddSingleton<IWebHostEnvironment>(HostingEnvironment);
 
@@ -239,8 +60,7 @@ namespace buttercms_dotnet_tutorial
             //services.Configure<UrlOptions>(Configuration.GetSection("UrlOptions"));
             //services.Configure<ButterCmsOptions>(Configuration.GetSection("ButterCMSOptions"));
 
-            services.AddScoped<ButterCMSClient>(c =>
-                new ButterCMSClient(c.GetRequiredService<IOptions<ButterCmsOptions>>().Value.ApiKey));
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -272,6 +92,7 @@ namespace buttercms_dotnet_tutorial
         }
     }
 }
+
 ```
 Now we are ready to move onto the rest of the project.
 # Landing Page
@@ -631,8 +452,11 @@ namespace buttercms_dotnet_tutorial.Models
     }
 }
 ```
-## Blog Controller
- Just like with the ```Pages``` we’ll then move on to ```BlogController```. Go into the ```Controllers``` folder, make a file called ```BlogController``` and add this code to it: 
+With that done we can move onto the ```Controller```
+
+## Blog Controller 
+
+Now for the last part, we're gonna make make the ```BlogController```. Make a file called ```BlogController.cs``` and in the file put: 
 ```csharp 
 using System;
 using System.Threading.Tasks;
@@ -642,159 +466,93 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using buttercms_dotnet_tutorial.Configuration;
 using buttercms_dotnet_tutorial.Models;
 
 namespace buttercms_dotnet_tutorial.Controllers
 {
-    public class BlogController : BaseController
+    public class BlogController : Controller
     {
-        public IActionResult Index()
+        private ButterCMSClient Client;
+
+        private static string _apiToken = "YOUR KEY";
+
+        public BlogController()
         {
-            return View();
-        }
-        public BlogController(IWebHostEnvironment hostingEnvironment, IOptions<UrlOptions> urlOptions, IOptions<ButterCmsOptions> siteOptions, ButterCMSClient client, IMemoryCache cache) : base(hostingEnvironment, urlOptions, siteOptions, client, cache)
-        {
+            Client = new ButterCMSClient(_apiToken);
         }
 
-
-        [Route("p/{page}")]
+        
         [Route("blog")]
         [Route("blog/p/{page}")]
-        [ResponseCache(CacheProfileName = "2days")]
-        public async Task<IActionResult> ListAllPosts(int page = 1)
+        public async Task<ActionResult> ListAllPosts(int page = 1)
         {
-            var postsPerPage = 10;
-
-            var response = await Cache.GetOrCreateAsync($"posts|all|{postsPerPage}|{page}", async entry =>
-            {
-                entry.Value = (await Client.ListPostsAsync(page, postsPerPage));
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(2);
-                return (PostsResponse)entry.Value;
-            });
-            
-            var model = new BlogListViewModel
-            {
-                Posts = response.Data,
-                Count = response.Meta.Count,
-                NextPage = response.Meta.NextPage,
-                CurrentPage = page,
-                PreviousPage = response.Meta.PreviousPage,
-                TotalPages = Convert.ToInt32(Math.Floor(decimal.Divide(response.Meta.Count, postsPerPage)))
-            };
-
-            return View(model);
+            var response = await Client.ListPostsAsync(page, 10);
+            ViewBag.Posts = response.Data;
+            ViewBag.NextPage = response.Meta.NextPage;
+            ViewBag.PreviousPage = response.Meta.PreviousPage;
+            return View();
         }
 
         [Route("blog/{slug}")]
-        [ResponseCache(CacheProfileName = "7days")]
-        public async Task<ActionResult> PostDetail(string slug)
+        public async Task<ActionResult> ShowPost(string slug)
         {
-            var response = await Cache.GetOrCreateAsync($"post|by-slug|{slug}", async entry =>
-            {
-                entry.Value = await Client.RetrievePostAsync(slug);
-                entry.AbsoluteExpiration = DateTimeOffset.Now.AddDays(7);
-                return (PostResponse)entry.Value;
-            });
-            
-            return View(response.Data);
+            var response = await Client.RetrievePostAsync(slug);
+            ViewBag.Post = response.Data;
+            return View("PostDetail");
         }
     }
 }
 ```
-With that done we can move on to ```Views``` and just like ```Pages```  we’ll make 1 folder and 2 files. 
-
 ## Blog Views
 
-Now, before making the next set of files, go to the ```Shared``` folder found in the same ```Views``` folder. In ```Shared``` make a ```DisplayTemplates``` folder. In the folder add the ```Post.cshtml``` file. This file will be for displaying the blog. The ```Post.cshtml``` look as such: 
-```cshtml 
-@model ButterCMS.Models.Post
-
-    <div class="card">
-        <div class="card-body" style="max-width:100%;
-  max-height:100%;">
-            <h1>@Model.Title</h1>
-            <span>@(Model.Published.HasValue ? $"{Model.Published.Value:D} / by " : "By ") <a href="/author/@Uri.EscapeDataString(Model.Author.Slug)" target="_blank">@Model.Author.FirstName @Model.Author.LastName</a></span>
-            <p style="max-width:100%;
-  max-height:100%;">@Model.Summary</p>
-            <a href="/blog/@Uri.EscapeDataString(Model.Slug)" class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-            
-        </div>
-    </div>
-```
 Now with that done we can move onto the actual blog. First let’s make the ```Blog``` folder in the ```Views``` folder. In the folder add ```ListAllPosts.cshtml``` which is gonna look like this:
 ```cshmtl
-@model buttercms_dotnet_tutorial.Models.BlogListViewModel
-@{
-    ViewBag.Title = "Blog";
-}
-
 <h2>Posts</h2>
 
-@Html.DisplayFor(m => m.Posts)
-
-
-
-
-@if (Model.TotalPages > 1)
+@foreach (var post in ViewBag.Posts)
 {
-    if (Model.PreviousPage != null)
-    {
-        <a href="/p/@Model.PreviousPage">Prev</a>
-    }
+    <a href="/blog/@Uri.EscapeDataString(post.Slug)">@post.Title</a>
+    @Html.Raw("by")
+    <a href="/author/@Uri.EscapeDataString(post.Author.Slug)">@post.Author.FirstName @post.Author.LastName</a>
+    <br />
+}
 
-    for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        if (i == Model.CurrentPage)
-        {
+@if (ViewBag.PreviousPage != null)
+{
+    <a href="/blog/p/@ViewBag.PreviousPage">Prev</a>
+}
 
-            <span class="page-number active">@i</span>
-        }
-        else
-        {
-            <span class="page-number"><a href="/p/@i">@i</a></span>
-        }
-
-    }
-
-    if (ViewBag.NextPage != null)
-    {
-        <a href="/p/@Model.NextPage">Next</a>
-    }
+@if (ViewBag.NextPage != null)
+{
+    <a href="/blog/p/@ViewBag.NextPage">Next</a>
 }
 ```
 Now that the posts are displaying in a neat vertical list we can make the page that displays the whole blog. Make a file called ```PostDetail.cshtml``` and the following code will be in there: 
 ```cshtml
-@model ButterCMS.Models.Post;
-@{
-    ViewBag.Title = Model.SeoTitle;
-    ViewBag.Author = Model.Author;
+
+<h2>@ViewBag.Post.Title</h2>
+
+Published @ViewBag.Post.Published.ToString("d/M/yyyy")
+@if (@ViewBag.Post.Categories.Count > 0)
+{
+    @Html.Raw("in")
+}
+@foreach (var category in @ViewBag.Post.Categories)
+{
+    <a href="/category/@Uri.EscapeDataString(category.Slug)">@category.Name</a>
 }
 
-<style>
-    .img {
-        max-height: 100%;
-        max-width: 100%;
-    }
-</style>
+<br />
 
-<div class="col-xs-6">
-    <a href="/" title="Go to Home Page"><i class="fas fa-arrow-left"></i> Back Home</a>
+<a href="/author/@Uri.EscapeDataString(ViewBag.Post.Author.Slug)">
+    @ViewBag.Post.Author.FirstName @ViewBag.Post.Author.LastName
+</a>
+
+<br />
+
+<div>
+    @Html.Raw(ViewBag.Post.Body)
 </div>
-
-
-
-<!-- Post Headline Start -->
-<div class="post-title">
-    <h1>@Model.Title</h1>
-</div>
-
-<h2>@Model.Author.FirstName @Model.Author.LastName</h2>
-<!-- Post Headline End -->
-
-    <div class="card-body" style="max-width: 100%; max-height: 100%;">
-        @Html.Raw(Model.Body)
-    </div>
 ```
 
 # Finishing Notes
